@@ -5,5 +5,5 @@ export const baseApi = createApi({
     baseUrl: "/",
   }),
   endpoints: () => ({}),
-  tagTypes: ["books", "borrowBooks"],
+  tagTypes: ["Books", "BorrowBooks"],
 });
