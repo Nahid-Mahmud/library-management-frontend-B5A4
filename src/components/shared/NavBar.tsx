@@ -10,7 +10,11 @@ export default function NavBar() {
     <nav className="bg-white relative border-b border-gray-200 shadow-md">
       <div className="container mx-auto  ">
         <div className="flex justify-between h-16 items-center">
-          <div className="text-2xl font-bold text-green-600">LibM</div>
+          <Link to={"/"}>
+            <div className="text-2xl font-bold text-green-600">LibM</div>
+          </Link>
+
+          {/* Desktop Menu Links */}
 
           <div className="hidden md:flex space-x-6">
             <Link to={"/all-books"} className="text-gray-700 hover:text-green-600 font-medium">

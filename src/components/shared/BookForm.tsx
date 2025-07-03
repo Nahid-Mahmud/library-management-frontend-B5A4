@@ -6,17 +6,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useGetBookByIdQuery, useGetGenreQuery } from "@/redux/features/book/bookApi";
+import { useGetBookByIdQuery, useGetGenreQuery, useUpdateBookMutation } from "@/redux/features/book/bookApi";
 import type { IBook } from "@/types/book.type";
 import { ArrowLeft, Loader2, Save } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link, useParams } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
+import { toast } from "react-toastify";
 
 // Zod validation schema
 
 interface UpdateBookFormProps {
-  method: "update" | "add";
+  method?: "update" | "add";
 }
 
 type BookFormData = {
@@ -30,15 +31,18 @@ type BookFormData = {
 };
 
 export function BookForm({ method }: UpdateBookFormProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState<{ type: "success" | "error"; message: string } | null>(null);
   const { data: genreData } = useGetGenreQuery(undefined);
 
-  console.log(genreData?.data);
+  const [updateFn, { isLoading: updateBookLoading }] = useUpdateBookMutation();
+
+  // console.log(genreData?.data);
+
+  const navigate = useNavigate();
 
   const { id } = useParams<{ id: string }>();
 
-  console.log(method, "Method used in BookForm");
+  // console.log(method, "Method used in BookForm");
 
   const { data } = useGetBookByIdQuery(id, {
     skip: !id,
@@ -69,27 +73,26 @@ export function BookForm({ method }: UpdateBookFormProps) {
   const watchedAvailable = watch("available");
 
   const onSubmit = async (data: BookFormData) => {
-    setIsSubmitting(true);
     setSubmitMessage(null);
 
-    try {
-      // Simulate API call - replace with your actual update logic
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      console.log("Updated book data:", { ...data, _id: book?._id });
-
-      setSubmitMessage({
-        type: "success",
-        message: "Book updated successfully!",
-      });
-    } catch (error) {
-      setSubmitMessage({
-        type: "error",
-        message: "Failed to update book. Please try again.",
-      });
-      console.error("Error updating book:", error);
-    } finally {
-      setIsSubmitting(false);
+    if (method === "update") {
+      try {
+        const res = await updateFn({
+          id: book._id,
+          data,
+        }).unwrap();
+        console.log(res);
+        if (res.success) {
+          toast.success("Book updated successfully!");
+          navigate("/all-books");
+        }
+      } catch (error) {
+        console.error("Error updating book:", error);
+        setSubmitMessage({
+          type: "error",
+          message: "Failed to update book. Please try again.",
+        });
+      }
     }
   };
 
@@ -106,7 +109,7 @@ export function BookForm({ method }: UpdateBookFormProps) {
         available: book.available,
       });
     }
-  }, [book, reset]);
+  }, [book, reset, genreData]);
 
   return (
     <div className="space-y-6 container mx-auto py-8">
@@ -226,21 +229,28 @@ export function BookForm({ method }: UpdateBookFormProps) {
             </div>
 
             <div className="flex gap-4 pt-6">
-              <Button type="submit" disabled={isSubmitting || !isDirty} className="flex-1 md:flex-none">
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Updating...
-                  </>
-                ) : (
-                  <>
-                    <Save className="h-4 w-4 mr-2" />
-                    Update Book
-                  </>
-                )}
-              </Button>
+              {method === "update" && (
+                <Button type="submit" disabled={updateBookLoading || !isDirty} className="flex-1 md:flex-none">
+                  {updateBookLoading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Updating...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="h-4 w-4 mr-2" />
+                      Update Book
+                    </>
+                  )}
+                </Button>
+              )}
 
-              <Button type="button" variant="outline" disabled={isSubmitting} onClick={() => window.history.back()}>
+              <Button
+                type="button"
+                variant="outline"
+                disabled={updateBookLoading}
+                onClick={() => window.history.back()}
+              >
                 Cancel
               </Button>
             </div>
