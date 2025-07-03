@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
+import { useGetBookByIdQuery } from "@/redux/features/book/bookApi";
 import { BookOpen, BookType, Calendar, Edit, Hash, User } from "lucide-react";
 import { Link } from "react-router";
 
@@ -12,20 +13,27 @@ interface BookDetailsModalProps {
 }
 
 export function BookDetailsModal({ bookId, isOpen, onClose }: BookDetailsModalProps) {
+  const { data: bookData } = useGetBookByIdQuery(bookId, {
+    skip: !bookId,
+    // refetchOnMountOrArgChange: true,
+  });
+
   console.log(bookId);
-  const book = {
-    _id: "1",
-    title: "The Great Gatsby",
-    author: "F. Scott Fitzgerald",
-    genre: "Fiction",
-    description:
-      "A novel set in the Roaring Twenties that explores themes of decadence, idealism, resistance to change, social upheaval, and excess.",
-    available: true,
-    copies: 5,
-    isbn: "978-0743273565",
-    createdAt: "2023-01-01T00:00:00Z",
-    updatedAt: "2023-01-15T00:00:00Z",
-  };
+  // const book = {
+  //   _id: "1",
+  //   title: "The Great Gatsby",
+  //   author: "F. Scott Fitzgerald",
+  //   genre: "Fiction",
+  //   description:
+  //     "A novel set in the Roaring Twenties that explores themes of decadence, idealism, resistance to change, social upheaval, and excess.",
+  //   available: true,
+  //   copies: 5,
+  //   isbn: "978-0743273565",
+  //   createdAt: "2023-01-01T00:00:00Z",
+  //   updatedAt: "2023-01-15T00:00:00Z",
+  // };
+
+  const book = bookData?.data;
 
   if (!book) {
     return null;
