@@ -11,8 +11,9 @@ const booksApi = baseApi.injectEndpoints({
       invalidatesTags: ["Books"],
     }),
     getAllBooks: builder.query({
-      query: () => ({
+      query: ({ page = 1, limit = 0 }: { page: number; limit: number }) => ({
         url: "/books",
+        params: { page, limit },
       }),
       providesTags: ["Books"],
     }),
