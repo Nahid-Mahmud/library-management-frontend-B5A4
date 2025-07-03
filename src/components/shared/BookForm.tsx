@@ -59,13 +59,13 @@ export function BookForm({ method }: UpdateBookFormProps) {
     formState: { errors, isDirty },
   } = useForm<BookFormData>({
     defaultValues: {
-      title: "",
-      author: "",
-      genre: "", // Default genre, can be changed
-      isbn: "",
-      description: "",
-      copies: 0,
-      available: true, // Default availability
+      title: book?.title,
+      author: book?.author,
+      genre: book?.genre,
+      isbn: book?.isbn,
+      description: book?.description,
+      copies: book?.copies,
+      available: book?.available,
     },
   });
 
