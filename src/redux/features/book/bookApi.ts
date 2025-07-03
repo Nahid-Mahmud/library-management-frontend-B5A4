@@ -42,7 +42,7 @@ const booksApi = baseApi.injectEndpoints({
     }),
     getGenre: builder.query({
       query: () => ({
-        url: "/books/genre",
+        url: "/books/genres",
       }),
       providesTags: ["Books"],
     }),
