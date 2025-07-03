@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router";
 import MainLayout from "../layout/MainLayout";
 import Home from "../pages/home/Home";
 import NotFound from "@/components/shared/NotFound";
+import AllBooks from "@/components/allBooks/AllBooks";
 
 const router = createBrowserRouter([
   {
@@ -14,6 +15,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/all-books",
+        element: <AllBooks />,
       },
     ],
   },

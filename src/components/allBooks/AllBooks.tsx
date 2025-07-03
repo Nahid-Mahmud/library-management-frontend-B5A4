@@ -1,6 +1,3 @@
-
 export default function AllBooks() {
-  return (
-    <div>AllBooks</div>
-  )
+  return <div className="container mx-auto">AllBooks</div>;
 }
