@@ -1,6 +1,7 @@
 import { createBrowserRouter } from "react-router";
 import MainLayout from "../layout/MainLayout";
 import Home from "../pages/home/Home";
+import NotFound from "@/components/shared/NotFound";
 
 const router = createBrowserRouter([
   {
@@ -12,6 +13,11 @@ const router = createBrowserRouter([
         element: <Home />,
       },
     ],
+  },
+  {
+    //not found route
+    path: "*",
+    element: <NotFound />,
   },
 ]);
 
