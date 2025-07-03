@@ -1,4 +1,4 @@
-import { useGetAllBooksQuery } from "@/redux/features/book/bookApi";
+import { useDeleteBookMutation, useGetAllBooksQuery } from "@/redux/features/book/bookApi";
 import type { IBook } from "@/types/book.type";
 import { BookOpen, Edit, Eye, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
@@ -9,6 +9,7 @@ import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
+import { toast } from "react-toastify";
 
 export default function AllBooks() {
   const [open, setIsOpen] = useState<boolean>(false);
@@ -19,6 +20,7 @@ export default function AllBooks() {
   });
 
   const { data: booksData, isLoading } = useGetAllBooksQuery(pagination);
+  const [deleteBookFn, { isLoading: deleteLoading }] = useDeleteBookMutation();
 
   const books = booksData?.data || [];
 
@@ -33,7 +35,16 @@ export default function AllBooks() {
   //   const totalPages = metaData ? Math.ceil(metaData.total / metaData?.limit !== 0 ? metaData.limit : 1) : 0;
   const totalPages = metaData ? Math.ceil(metaData.total / (metaData.limit || 1)) : 0;
 
-  console.log("Books Data:", booksData?.meta);
+  //   console.log("Books Data:", booksData?.meta);
+  const deleteBook = async (bookId: string) => {
+    try {
+      await deleteBookFn(bookId).unwrap();
+      toast.success("Book deleted successfully");
+    } catch (error) {
+      toast.error("Failed to delete book");
+      console.error("Failed to delete book:", error);
+    }
+  };
 
   if (isLoading)
     return (
@@ -120,7 +131,14 @@ export default function AllBooks() {
                               <BookOpen className="h-4 w-4" />
                             </Button>
                           </Link>
-                          <Button variant="ghost" size="sm" onClick={() => {}}>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              deleteBook(book._id);
+                            }}
+                            disabled={deleteLoading}
+                          >
                             <Trash2 className="h-4 w-4 text-red-600" />
                           </Button>
                         </div>
