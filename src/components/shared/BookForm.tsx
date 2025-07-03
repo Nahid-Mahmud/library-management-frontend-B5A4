@@ -1,4 +1,3 @@
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -6,11 +5,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useGetBookByIdQuery, useGetGenreQuery, useUpdateBookMutation } from "@/redux/features/book/bookApi";
+import {
+  useCreateBookMutation,
+  useGetBookByIdQuery,
+  useGetGenreQuery,
+  useUpdateBookMutation,
+} from "@/redux/features/book/bookApi";
 import type { IBook } from "@/types/book.type";
 import { ArrowLeft, Loader2, Save } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { Link, useNavigate, useParams } from "react-router";
 import { toast } from "react-toastify";
 
@@ -31,10 +35,10 @@ type BookFormData = {
 };
 
 export function BookForm({ method }: UpdateBookFormProps) {
-  const [submitMessage, setSubmitMessage] = useState<{ type: "success" | "error"; message: string } | null>(null);
   const { data: genreData } = useGetGenreQuery(undefined);
 
   const [updateFn, { isLoading: updateBookLoading }] = useUpdateBookMutation();
+  const [createBookFn, { isLoading: createBookLoading }] = useCreateBookMutation();
 
   // console.log(genreData?.data);
 
@@ -56,25 +60,25 @@ export function BookForm({ method }: UpdateBookFormProps) {
     setValue,
     watch,
     reset,
+    control,
+    trigger,
     formState: { errors, isDirty },
   } = useForm<BookFormData>({
     defaultValues: {
-      title: book?.title,
-      author: book?.author,
-      genre: book?.genre,
-      isbn: book?.isbn,
-      description: book?.description,
-      copies: book?.copies,
-      available: book?.available,
+      title: book?.title || "",
+      author: book?.author || "",
+      genre: book?.genre || "",
+      isbn: book?.isbn || "",
+      description: book?.description || "",
+      copies: book?.copies || 0,
+      available: book?.available || false,
     },
   });
 
-  const watchedGenre = watch("genre");
+  // const watchedGenre = watch("genre");
   const watchedAvailable = watch("available");
 
   const onSubmit = async (data: BookFormData) => {
-    setSubmitMessage(null);
-
     if (method === "update") {
       try {
         const res = await updateFn({
@@ -88,10 +92,21 @@ export function BookForm({ method }: UpdateBookFormProps) {
         }
       } catch (error) {
         console.error("Error updating book:", error);
-        setSubmitMessage({
-          type: "error",
-          message: "Failed to update book. Please try again.",
-        });
+        toast.error("Failed to update book. Please try again.");
+      }
+    }
+
+    if (method === "add") {
+      try {
+        const res = await createBookFn(data).unwrap();
+        console.log(res);
+        if (res.success) {
+          toast.success("Book created successfully!");
+          navigate("/all-books");
+        }
+      } catch (error) {
+        console.error("Error creating book:", error);
+        toast.error("Failed to create book. Please try again.");
       }
     }
   };
@@ -122,16 +137,6 @@ export function BookForm({ method }: UpdateBookFormProps) {
         </Button>
       </div>
 
-      {submitMessage && (
-        <Alert
-          className={submitMessage.type === "success" ? "border-green-200 bg-green-50" : "border-red-200 bg-red-50"}
-        >
-          <AlertDescription className={submitMessage.type === "success" ? "text-green-800" : "text-red-800"}>
-            {submitMessage.message}
-          </AlertDescription>
-        </Alert>
-      )}
-
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -144,13 +149,33 @@ export function BookForm({ method }: UpdateBookFormProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label htmlFor="title">Title *</Label>
-                <Input id="title" {...register("title")} className={errors.title ? "border-red-500" : ""} />
+                <Input
+                  id="title"
+                  {...register("title", {
+                    required: "Title is required",
+                    minLength: {
+                      value: 3,
+                      message: "Title must be at least 3 characters long",
+                    },
+                  })}
+                  className={errors.title ? "border-red-500" : ""}
+                />
                 {errors.title && <p className="text-sm text-red-500">{errors.title.message}</p>}
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="author">Author *</Label>
-                <Input id="author" {...register("author")} className={errors.author ? "border-red-500" : ""} />
+                <Input
+                  id="author"
+                  {...register("author", {
+                    required: "Author is required",
+                    minLength: {
+                      value: 3,
+                      message: "Author name must be at least 3 characters long",
+                    },
+                  })}
+                  className={errors.author ? "border-red-500" : ""}
+                />
                 {errors.author && <p className="text-sm text-red-500">{errors.author.message}</p>}
               </div>
             </div>
@@ -158,21 +183,34 @@ export function BookForm({ method }: UpdateBookFormProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label htmlFor="genre">Genre *</Label>
-                <Select
-                  value={watchedGenre}
-                  onValueChange={(value) => setValue("genre", value as BookFormData["genre"], { shouldDirty: true })}
-                >
-                  <SelectTrigger className={errors.genre ? "border-red-500" : ""}>
-                    <SelectValue placeholder="Select a genre" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {genreData?.data?.map((genre: string) => (
-                      <SelectItem key={genre} value={genre}>
-                        {genre.split("_").join(" ")}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Controller
+                  control={control}
+                  name="genre"
+                  rules={{ required: "Genre is required" }}
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      value={field.value}
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                        setValue("genre", value as BookFormData["genre"], { shouldDirty: true });
+                        trigger("genre");
+                      }}
+                    >
+                      <SelectTrigger className={errors.genre ? "border-red-500" : ""}>
+                        <SelectValue placeholder="Select a genre" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {genreData?.data?.map((genre: string) => (
+                          <SelectItem key={genre} value={genre}>
+                            {genre.split("_").join(" ")}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+
                 {errors.genre && <p className="text-sm text-red-500">{errors.genre.message}</p>}
               </div>
 
@@ -180,7 +218,9 @@ export function BookForm({ method }: UpdateBookFormProps) {
                 <Label htmlFor="isbn">ISBN *</Label>
                 <Input
                   id="isbn"
-                  {...register("isbn")}
+                  {...register("isbn", {
+                    required: "ISBN is required",
+                  })}
                   placeholder="978-0-123456-78-9"
                   className={errors.isbn ? "border-red-500" : ""}
                 />
@@ -192,7 +232,13 @@ export function BookForm({ method }: UpdateBookFormProps) {
               <Label htmlFor="description">Description *</Label>
               <Textarea
                 id="description"
-                {...register("description")}
+                {...register("description", {
+                  required: "Description is required",
+                  minLength: {
+                    value: 10,
+                    message: "Description must be at least 10 characters long",
+                  },
+                })}
                 rows={4}
                 className={errors.description ? "border-red-500" : ""}
                 placeholder="Enter book description..."
@@ -245,10 +291,25 @@ export function BookForm({ method }: UpdateBookFormProps) {
                 </Button>
               )}
 
+              {method === "add" && (
+                <Button type="submit" disabled={createBookLoading || !isDirty} className="flex-1 md:flex-none">
+                  {createBookLoading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Creating...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="h-4 w-4 mr-2" />
+                      Create Book
+                    </>
+                  )}
+                </Button>
+              )}
               <Button
                 type="button"
                 variant="outline"
-                disabled={updateBookLoading}
+                disabled={createBookLoading || updateBookLoading}
                 onClick={() => window.history.back()}
               >
                 Cancel
