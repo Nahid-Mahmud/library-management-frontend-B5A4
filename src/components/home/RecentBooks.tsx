@@ -5,44 +5,62 @@ import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { BookDetailsModal } from "./BookDetailsModal";
 import { useState } from "react";
+import { useGetAllBooksQuery } from "@/redux/features/book/bookApi";
+import type { IBook } from "@/types/book.type";
 
-const books = [
-  {
-    _id: "1",
-    title: "The Great Gatsby",
-    author: "F. Scott Fitzgerald",
-    genre: "Fiction",
-    description:
-      "A novel set in the Roaring Twenties that explores themes of decadence, idealism, resistance to change, social upheaval, and excess.",
-    available: true,
-    copies: 5,
-  },
-  {
-    _id: "2",
-    title: "To Kill a Mockingbird",
-    author: "Harper Lee",
-    genre: "Fiction",
-    description:
-      "A novel about the serious issues that are faced in the Deep South, including racial injustice and moral growth.",
-    available: false,
-    copies: 0,
-  },
-];
+// const books = [
+//   {
+//     _id: "1",
+//     title: "The Great Gatsby",
+//     author: "F. Scott Fitzgerald",
+//     genre: "Fiction",
+//     description:
+//       "A novel set in the Roaring Twenties that explores themes of decadence, idealism, resistance to change, social upheaval, and excess.",
+//     available: true,
+//     copies: 5,
+//   },
+//   {
+//     _id: "2",
+//     title: "To Kill a Mockingbird",
+//     author: "Harper Lee",
+//     genre: "Fiction",
+//     description:
+//       "A novel about the serious issues that are faced in the Deep South, including racial injustice and moral growth.",
+//     available: false,
+//     copies: 0,
+//   },
+// ];
 
 export default function RecentBooks() {
   const [selectedBookId, setSelectedBookId] = useState<string | null>(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const {
+    data: booksData,
+    isLoading: bookDataLoading,
+    error: bookDataError,
+  } = useGetAllBooksQuery({ page: 1, limit: 6 });
+
   //   const openModal = (bookId: string) => {
   //     setSelectedBookId(bookId);
   //     setIsModalOpen(true);
   //   };
 
+  console.log("Books Data:", booksData);
+
   const closeModal = () => {
     setSelectedBookId(null);
     setIsModalOpen(false);
   };
+
+  if (bookDataLoading) {
+    return <div className="text-center text-gray-500">Loading books...</div>;
+  }
+
+  if (bookDataError) {
+    return <div className="text-center text-red-500">Failed to load books.</div>;
+  }
 
   return (
     <section className="flex flex-col gap-5 container mx-auto mb-5 ">
@@ -52,7 +70,7 @@ export default function RecentBooks() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {books.slice(0, 3).map((book) => (
+        {booksData?.data?.map((book: IBook) => (
           <Card key={book._id} className="hover:shadow-md transition-shadow duration-200">
             <CardHeader>
               <div className="flex justify-between items-start">
