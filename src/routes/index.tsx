@@ -4,6 +4,7 @@ import Home from "../pages/home/Home";
 import NotFound from "@/components/shared/NotFound";
 import AllBooks from "@/pages/allBooks/AllBooks";
 import EditBooks from "@/pages/editBooks/EditBooks";
+import AddBooks from "@/pages/add-books/AddBooks";
 
 const router = createBrowserRouter([
   {
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
       {
         path: "/edit-book/:id",
         element: <EditBooks />,
+      },
+      {
+        path: "/add-book",
+        element: <AddBooks />, // Assuming this is the same component as EditBooks for adding
       },
     ],
   },
