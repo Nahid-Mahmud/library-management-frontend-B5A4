@@ -1,0 +1,91 @@
+import { BookOpen } from "lucide-react";
+import { Link } from "react-router";
+import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+
+const books = [
+  {
+    _id: "1",
+    title: "The Great Gatsby",
+    author: "F. Scott Fitzgerald",
+    genre: "Fiction",
+    description:
+      "A novel set in the Roaring Twenties that explores themes of decadence, idealism, resistance to change, social upheaval, and excess.",
+    available: true,
+    copies: 5,
+  },
+  {
+    _id: "2",
+    title: "To Kill a Mockingbird",
+    author: "Harper Lee",
+    genre: "Fiction",
+    description:
+      "A novel about the serious issues that are faced in the Deep South, including racial injustice and moral growth.",
+    available: false,
+    copies: 0,
+  },
+];
+
+export default function RecentBooks() {
+  return (
+    <section className="space-y-8 container mx-auto ">
+      <div className="text-center space-y-4">
+        <h2 className="text-3xl font-bold text-gray-900">Recent Books</h2>
+        <p className="text-gray-600">Latest additions to our library collection</p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {books.slice(0, 3).map((book) => (
+          <Card key={book._id} className="hover:shadow-md transition-shadow duration-200">
+            <CardHeader>
+              <div className="flex justify-between items-start">
+                <div className="space-y-1">
+                  <CardTitle className="text-lg line-clamp-2">{book.title}</CardTitle>
+                  <p className="text-sm text-gray-600">by {book.author}</p>
+                </div>
+                <Badge variant={book.available ? "secondary" : "destructive"} className="ml-2">
+                  {book.available ? "Available" : "Unavailable"}
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <p className="text-sm text-gray-600">
+                  <span className="font-medium">Genre:</span> {book.genre}
+                </p>
+                <p className="text-sm text-gray-600">
+                  <span className="font-medium">Copies:</span> {book.copies}
+                </p>
+              </div>
+              {book.description && <p className="text-sm text-gray-700 line-clamp-2">{book.description}</p>}
+              <div className="flex space-x-2">
+                <Link to={`/books/${book._id}`} className="flex-1">
+                  <Button variant="outline" size="sm" className="w-full bg-transparent">
+                    View Details
+                  </Button>
+                </Link>
+                {book.available && (
+                  <Link to={`/borrow/${book._id}`}>
+                    <Button size="sm" className="">
+                      <BookOpen className="h-4 w-4 mr-1" />
+                      Borrow
+                    </Button>
+                  </Link>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      <div className="text-center">
+        <Link to="/all-books">
+          <Button variant="outline" size="lg">
+            View All Books
+          </Button>
+        </Link>
+      </div>
+    </section>
+  );
+}
