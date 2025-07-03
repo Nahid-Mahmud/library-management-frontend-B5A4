@@ -4,11 +4,11 @@ import { BookOpen, Edit, Eye, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { FaSpinner } from "react-icons/fa6";
 import { Link } from "react-router";
-import { BookDetailsModal } from "../home/BookDetailsModal";
-import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
+import { BookDetailsModal } from "../../components/home/BookDetailsModal";
+import { Badge } from "../../components/ui/badge";
+import { Button } from "../../components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../components/ui/table";
 import { toast } from "react-toastify";
 
 export default function AllBooks() {

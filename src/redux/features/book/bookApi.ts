@@ -40,6 +40,12 @@ const booksApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Books"],
     }),
+    getGenre: builder.query({
+      query: () => ({
+        url: "/books/genre",
+      }),
+      providesTags: ["Books"],
+    }),
   }),
 });
 
@@ -49,4 +55,5 @@ export const {
   useGetBookByIdQuery,
   useUpdateBookMutation,
   useDeleteBookMutation,
+  useGetGenreQuery,
 } = booksApi;
