@@ -3,6 +3,8 @@ import { Link } from "react-router";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { BookDetailsModal } from "./BookDetailsModal";
+import { useState } from "react";
 
 const books = [
   {
@@ -28,8 +30,22 @@ const books = [
 ];
 
 export default function RecentBooks() {
+  const [selectedBookId, setSelectedBookId] = useState<string | null>(null);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  //   const openModal = (bookId: string) => {
+  //     setSelectedBookId(bookId);
+  //     setIsModalOpen(true);
+  //   };
+
+  const closeModal = () => {
+    setSelectedBookId(null);
+    setIsModalOpen(false);
+  };
+
   return (
-    <section className="space-y-8 container mx-auto ">
+    <section className="flex flex-col gap-5 container mx-auto mb-5 ">
       <div className="text-center space-y-4">
         <h2 className="text-3xl font-bold text-gray-900">Recent Books</h2>
         <p className="text-gray-600">Latest additions to our library collection</p>
@@ -59,20 +75,25 @@ export default function RecentBooks() {
                 </p>
               </div>
               {book.description && <p className="text-sm text-gray-700 line-clamp-2">{book.description}</p>}
-              <div className="flex space-x-2">
-                <Link to={`/books/${book._id}`} className="flex-1">
-                  <Button variant="outline" size="sm" className="w-full bg-transparent">
-                    View Details
+              <div className="grid grid-cols-2 gap-2">
+                <Button
+                  onClick={() => {
+                    setSelectedBookId(book._id);
+                    setIsModalOpen(true);
+                  }}
+                  variant="outline"
+                  size="sm"
+                  className="w-full bg-transparent"
+                >
+                  View Details
+                </Button>
+
+                <Link to={`/borrow/${book._id}`}>
+                  <Button size="sm" className="">
+                    <BookOpen className="h-4 w-4 mr-1" />
+                    Borrow
                   </Button>
                 </Link>
-                {book.available && (
-                  <Link to={`/borrow/${book._id}`}>
-                    <Button size="sm" className="">
-                      <BookOpen className="h-4 w-4 mr-1" />
-                      Borrow
-                    </Button>
-                  </Link>
-                )}
               </div>
             </CardContent>
           </Card>
@@ -86,6 +107,8 @@ export default function RecentBooks() {
           </Button>
         </Link>
       </div>
+
+      <BookDetailsModal bookId={selectedBookId} isOpen={isModalOpen} onClose={closeModal} />
     </section>
   );
 }
