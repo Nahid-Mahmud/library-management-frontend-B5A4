@@ -10,9 +10,11 @@ import { Button } from "../../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../components/ui/table";
 import { toast } from "react-toastify";
+import BorrowBookModal from "@/components/borrow-book/BorrowBookModal";
 
 export default function AllBooks() {
   const [open, setIsOpen] = useState<boolean>(false);
+  const [borrowBookModalOpen, setBorrowBookModalOpen] = useState<boolean>(false);
   const [bookId, setBookId] = useState<string | null>(null);
   const [pagination, setPagination] = useState({
     limit: 5,
@@ -126,11 +128,16 @@ export default function AllBooks() {
                               <Edit className="h-4 w-4" />
                             </Button>
                           </Link>
-                          <Link to={`/borrow/${book._id}`}>
-                            <Button variant="ghost" size="sm" disabled={!book.available}>
-                              <BookOpen className="h-4 w-4" />
-                            </Button>
-                          </Link>
+
+                          <Button
+                            onClick={() => setBorrowBookModalOpen(true)}
+                            variant="ghost"
+                            size="sm"
+                            disabled={!book.available}
+                          >
+                            <BookOpen className="h-4 w-4" />
+                          </Button>
+
                           <Button
                             variant="ghost"
                             size="sm"
@@ -187,6 +194,10 @@ export default function AllBooks() {
         bookId={bookId}
         isOpen={open}
       />
+
+      {/* modal for borrow book */}
+
+      <BorrowBookModal open={borrowBookModalOpen} onClose={() => setBorrowBookModalOpen(false)} />
     </div>
   );
 }
