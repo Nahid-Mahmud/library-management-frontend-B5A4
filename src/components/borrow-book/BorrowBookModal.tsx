@@ -9,7 +9,12 @@ import { z } from "zod";
 // Zod schema
 const formSchema = z.object({
   number: z.number().min(1, "Number must be greater than 0"),
-  date: z.string().min(1, "Date is required"),
+
+  date: z.string().refine((date) => {
+    const today = new Date();
+    const selectedDate = new Date(date);
+    return selectedDate > today;
+  }, "Date must be in the future"),
 });
 
 type FormData = z.infer<typeof formSchema>;
