@@ -5,10 +5,12 @@ import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useBorrowBookMutation } from "@/redux/features/borrow-book/borrowBookApi";
+import { toast } from "react-toastify";
 
 // Zod schema
 const formSchema = z.object({
-  number: z.number().min(1, "Number must be greater than 0"),
+  quantity: z.number().min(1, "Number must be greater than 0"),
 
   date: z.string().refine((date) => {
     const today = new Date();
@@ -22,9 +24,11 @@ type FormData = z.infer<typeof formSchema>;
 interface BorrowBookModalProps {
   open: boolean;
   onClose: () => void;
+  bookId: string | null;
+  setBookId: (id: string | null) => void;
 }
 
-export default function BorrowBookModal({ open, onClose }: BorrowBookModalProps) {
+export default function BorrowBookModal({ bookId, open, onClose, setBookId }: BorrowBookModalProps) {
   const {
     register,
     handleSubmit,
@@ -33,18 +37,38 @@ export default function BorrowBookModal({ open, onClose }: BorrowBookModalProps)
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      number: 0,
+      quantity: 0,
       date: "",
     },
   });
 
-  const onSubmitForm = (data: FormData) => {
-    console.log(data);
-    reset();
-    onClose();
+  const [borrowBookFn, { isLoading }] = useBorrowBookMutation();
+
+  const onSubmitForm = async (data: FormData) => {
+    // console.log(data);
+
+    try {
+      if (!bookId) {
+        toast.error("Book ID is required to borrow a book");
+        return;
+      }
+      // console.log({ book: bookId, ...data });
+      // return;
+      const res = await borrowBookFn({ book: bookId, dueDate: data?.date, quantity: data?.quantity }).unwrap();
+      if (res.success) {
+        toast.success("Book borrowed successfully");
+        setBookId(null);
+        reset();
+        onClose();
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast.error("Failed to borrow book. Please try again.");
+    }
   };
 
   const handleClose = () => {
+    setBookId(null);
     reset();
     onClose();
   };
@@ -61,11 +85,11 @@ export default function BorrowBookModal({ open, onClose }: BorrowBookModalProps)
             <Label htmlFor="number">Number</Label>
             <Input
               type="number"
-              id="number"
-              {...register("number", { valueAsNumber: true })}
+              id="quantity"
+              {...register("quantity", { valueAsNumber: true })}
               placeholder="Enter a number"
             />
-            {errors.number && <p className="text-sm text-red-500 mt-1">{errors.number.message}</p>}
+            {errors.quantity && <p className="text-sm text-red-500 mt-1">{errors.quantity.message}</p>}
           </div>
 
           <div>
@@ -78,7 +102,9 @@ export default function BorrowBookModal({ open, onClose }: BorrowBookModalProps)
             <Button type="button" variant="outline" onClick={handleClose}>
               Cancel
             </Button>
-            <Button type="submit">Submit</Button>
+            <Button disabled={isLoading} type="submit">
+              {isLoading ? "Submitting..." : "Submit"}
+            </Button>
           </div>
         </form>
       </DialogContent>
