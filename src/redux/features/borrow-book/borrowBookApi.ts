@@ -4,7 +4,7 @@ const borrowBooksApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     borrowBook: builder.mutation({
       query: (data) => ({
-        url: "/borrow-books",
+        url: "/borrow",
         method: "POST",
         body: data,
       }),
@@ -12,7 +12,7 @@ const borrowBooksApi = baseApi.injectEndpoints({
     }),
     borrowBooksSummary: builder.query({
       query: () => ({
-        url: "/borrow-books/summary",
+        url: "/borrow",
         method: "GET",
       }),
       providesTags: ["BorrowBooks"],
