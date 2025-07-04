@@ -16,6 +16,7 @@ export default function AllBooks() {
   const [open, setIsOpen] = useState<boolean>(false);
   const [borrowBookModalOpen, setBorrowBookModalOpen] = useState<boolean>(false);
   const [bookId, setBookId] = useState<string | null>(null);
+
   const [pagination, setPagination] = useState({
     limit: 5,
     page: 1,
@@ -130,7 +131,10 @@ export default function AllBooks() {
                           </Link>
 
                           <Button
-                            onClick={() => setBorrowBookModalOpen(true)}
+                            onClick={() => {
+                              setBorrowBookModalOpen(true);
+                              setBookId(book._id);
+                            }}
                             variant="ghost"
                             size="sm"
                             disabled={!book.available}
@@ -197,7 +201,12 @@ export default function AllBooks() {
 
       {/* modal for borrow book */}
 
-      <BorrowBookModal open={borrowBookModalOpen} onClose={() => setBorrowBookModalOpen(false)} />
+      <BorrowBookModal
+        open={borrowBookModalOpen}
+        onClose={() => setBorrowBookModalOpen(false)}
+        bookId={bookId}
+        setBookId={setBookId}
+      />
     </div>
   );
 }
