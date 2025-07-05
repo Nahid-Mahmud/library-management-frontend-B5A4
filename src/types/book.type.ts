@@ -23,3 +23,13 @@ export interface IBook {
   createdAt: string;
   updatedAt: string;
 }
+
+export type BookFormData = {
+  title: string;
+  author: string;
+  genre: string;
+  isbn: string;
+  description: string;
+  copies: number;
+  available: boolean;
+};
