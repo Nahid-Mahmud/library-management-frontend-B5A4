@@ -40,12 +40,9 @@ export function BookForm({ method }: UpdateBookFormProps) {
   const [updateFn, { isLoading: updateBookLoading }] = useUpdateBookMutation();
   const [createBookFn, { isLoading: createBookLoading }] = useCreateBookMutation();
 
-
-
   const navigate = useNavigate();
 
   const { id } = useParams<{ id: string }>();
-
 
   const { data } = useGetBookByIdQuery(id, {
     skip: !id,
@@ -273,7 +270,11 @@ export function BookForm({ method }: UpdateBookFormProps) {
 
             <div className="flex gap-4 pt-6">
               {method === "update" && (
-                <Button type="submit" disabled={updateBookLoading || !isDirty} className="flex-1 md:flex-none">
+                <Button
+                  type="submit"
+                  disabled={updateBookLoading || !isDirty}
+                  className="flex-1 md:flex-none bg-green-800 text-white hover:bg-green-700 transition-colors duration-200"
+                >
                   {updateBookLoading ? (
                     <>
                       <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -289,7 +290,11 @@ export function BookForm({ method }: UpdateBookFormProps) {
               )}
 
               {method === "add" && (
-                <Button type="submit" disabled={createBookLoading || !isDirty} className="flex-1 md:flex-none">
+                <Button
+                  type="submit"
+                  disabled={createBookLoading || !isDirty}
+                  className="flex-1 md:flex-none bg-green-800 text-white hover:bg-green-700 transition-colors duration-200"
+                >
                   {createBookLoading ? (
                     <>
                       <Loader2 className="h-4 w-4 mr-2 animate-spin" />
