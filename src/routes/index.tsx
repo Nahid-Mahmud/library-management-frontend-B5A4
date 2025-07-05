@@ -5,6 +5,7 @@ import NotFound from "@/components/shared/NotFound";
 import AllBooks from "@/pages/allBooks/AllBooks";
 import EditBooks from "@/pages/editBooks/EditBooks";
 import AddBooks from "@/pages/add-books/AddBooks";
+import BorrowBookSummary from "@/pages/borrow-books-summary/BorrowBookSummary";
 
 const router = createBrowserRouter([
   {
@@ -29,6 +30,7 @@ const router = createBrowserRouter([
       },
       {
         path: "borrow-books-summary",
+        element: <BorrowBookSummary />,
       },
     ],
   },
