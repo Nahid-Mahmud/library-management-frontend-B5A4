@@ -26,7 +26,7 @@ export default function AllBooks() {
   const { data: booksData, isLoading } = useGetAllBooksQuery(pagination);
   const [deleteBookFn, { isLoading: deleteLoading }] = useDeleteBookMutation();
 
-  const books = booksData?.data || [];
+  const books: IBook[] = booksData?.data || [];
   const metaData = booksData?.meta;
 
   const totalPages = metaData ? Math.ceil(metaData.total / (metaData.limit || 1)) : 0;
@@ -69,7 +69,10 @@ export default function AllBooks() {
           {/* Desktop Table View */}
           <Card className="hidden md:block">
             <CardHeader>
-              <CardTitle>Books Collection ({books.length})</CardTitle>
+              <CardTitle>
+                Books Collection ( {books.length} of
+                {booksData?.meta?.total})
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="overflow-x-auto">
