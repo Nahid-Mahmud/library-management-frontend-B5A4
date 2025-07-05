@@ -22,7 +22,7 @@ export default function BorrowBookSummary() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col items-center justify-center mb-6">
-        <h1 className="text-2xl font-bold ">Borrowed Books Summary</h1>
+        <h1 className="text-2xl md:text-4xl font-bold ">Borrowed Books Summary</h1>
         <p className="text-muted-foreground mb-4 underline">
           Below is the summary of all borrowed books, including the total quantity of each book.
         </p>
@@ -30,7 +30,7 @@ export default function BorrowBookSummary() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3  gap-4">
         {borrowBookData?.data?.map((item: BorrowBookSummaryItem) => (
           <Card key={item.book.isbn} className="hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
-            <CardHeader className="pb-4">
+            <CardHeader className="">
               <div className="flex items-start justify-between gap-3">
                 <div className="space-y-2 flex-1 min-w-0">
                   <CardTitle className="text-lg leading-tight line-clamp-2">{item.book.title}</CardTitle>
