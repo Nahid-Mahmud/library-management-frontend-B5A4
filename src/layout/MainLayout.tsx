@@ -6,7 +6,9 @@ export default function MainLayout() {
   return (
     <div className="grid grid-rows-[auto_1fr_auto] min-h-screen">
       <NavBar />
-      <Outlet />
+      <div className="px-4">
+        <Outlet />
+      </div>
       <Footer />
     </div>
   );
