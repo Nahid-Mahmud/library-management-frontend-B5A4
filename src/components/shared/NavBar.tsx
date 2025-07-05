@@ -7,7 +7,7 @@ export default function NavBar() {
   const toggleMenu = () => setIsOpen(!isOpen);
 
   return (
-    <nav className="bg-white relative border-b border-gray-200 shadow-md">
+    <nav className="bg-white relative border-b border-gray-200 shadow-md px-4">
       <div className="container mx-auto  ">
         <div className="flex justify-between h-16 items-center">
           <Link to={"/"}>
@@ -50,13 +50,31 @@ export default function NavBar() {
           isOpen ? "top-15 left-0" : "-top-60 left-0"
         } bg-white w-full absolute px-8 pt-2 pb-4 space-y-2 transition-all duration-300 ease-in-out md:hidden `}
       >
-        <Link to={"/all-books"} className="block text-gray-700 hover:text-green-600 font-medium">
+        <Link
+          onClick={() => {
+            setIsOpen(false);
+          }}
+          to={"/all-books"}
+          className="block text-gray-700 hover:text-green-600 font-medium"
+        >
           All Books
         </Link>
-        <Link to={"/add-book"} className="block text-gray-700 hover:text-green-600 font-medium">
+        <Link
+          onClick={() => {
+            setIsOpen(false);
+          }}
+          to={"/add-book"}
+          className="block text-gray-700 hover:text-green-600 font-medium"
+        >
           Add Book
         </Link>
-        <Link to={"borrow-books-summary"} className="block text-gray-700 hover:text-green-600 font-medium">
+        <Link
+          onClick={() => {
+            setIsOpen(false);
+          }}
+          to={"borrow-books-summary"}
+          className="block text-gray-700 hover:text-green-600 font-medium"
+        >
           Borrow Summary
         </Link>
       </div>
