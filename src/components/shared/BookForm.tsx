@@ -40,13 +40,12 @@ export function BookForm({ method }: UpdateBookFormProps) {
   const [updateFn, { isLoading: updateBookLoading }] = useUpdateBookMutation();
   const [createBookFn, { isLoading: createBookLoading }] = useCreateBookMutation();
 
-  // console.log(genreData?.data);
+
 
   const navigate = useNavigate();
 
   const { id } = useParams<{ id: string }>();
 
-  // console.log(method, "Method used in BookForm");
 
   const { data } = useGetBookByIdQuery(id, {
     skip: !id,
@@ -85,7 +84,6 @@ export function BookForm({ method }: UpdateBookFormProps) {
           id: book._id,
           data,
         }).unwrap();
-        console.log(res);
         if (res.success) {
           toast.success("Book updated successfully!");
           navigate("/all-books");
@@ -99,7 +97,6 @@ export function BookForm({ method }: UpdateBookFormProps) {
     if (method === "add") {
       try {
         const res = await createBookFn(data).unwrap();
-        console.log(res);
         if (res.success) {
           toast.success("Book created successfully!");
           navigate("/all-books");

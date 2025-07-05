@@ -45,15 +45,13 @@ export default function BorrowBookModal({ bookId, open, onClose, setBookId }: Bo
   const [borrowBookFn, { isLoading }] = useBorrowBookMutation();
 
   const onSubmitForm = async (data: FormData) => {
-    // console.log(data);
+
 
     try {
       if (!bookId) {
         toast.error("Book ID is required to borrow a book");
         return;
       }
-      // console.log({ book: bookId, ...data });
-      // return;
       const res = await borrowBookFn({ book: bookId, dueDate: data?.date, quantity: data?.quantity }).unwrap();
       if (res.success) {
         toast.success("Book borrowed successfully");

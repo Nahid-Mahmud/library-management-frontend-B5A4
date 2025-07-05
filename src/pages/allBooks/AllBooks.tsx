@@ -1,16 +1,16 @@
+import BorrowBookModal from "@/components/borrow-book/BorrowBookModal";
+import Loader from "@/components/shared/Loader";
 import { useDeleteBookMutation, useGetAllBooksQuery } from "@/redux/features/book/bookApi";
 import type { IBook } from "@/types/book.type";
 import { BookOpen, Edit, Eye, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { FaSpinner } from "react-icons/fa6";
 import { Link } from "react-router";
+import { toast } from "react-toastify";
 import { BookDetailsModal } from "../../components/home/BookDetailsModal";
 import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../components/ui/table";
-import { toast } from "react-toastify";
-import BorrowBookModal from "@/components/borrow-book/BorrowBookModal";
 
 export default function AllBooks() {
   const [open, setIsOpen] = useState<boolean>(false);
@@ -38,7 +38,6 @@ export default function AllBooks() {
   //   const totalPages = metaData ? Math.ceil(metaData.total / metaData?.limit !== 0 ? metaData.limit : 1) : 0;
   const totalPages = metaData ? Math.ceil(metaData.total / (metaData.limit || 1)) : 0;
 
-  //   console.log("Books Data:", booksData?.meta);
   const deleteBook = async (bookId: string) => {
     try {
       await deleteBookFn(bookId).unwrap();
@@ -49,13 +48,7 @@ export default function AllBooks() {
     }
   };
 
-  if (isLoading)
-    return (
-      <div className="flex justify-center items-center py-12">
-        {/* <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div> */}
-        <FaSpinner className="animate-spin h-8 w-8 text-green-600" />
-      </div>
-    );
+  if (isLoading) return <Loader />;
 
   return (
     <div className="container mx-auto py-5">

@@ -7,6 +7,7 @@ import { BookDetailsModal } from "./BookDetailsModal";
 import { useState } from "react";
 import { useGetAllBooksQuery } from "@/redux/features/book/bookApi";
 import type { IBook } from "@/types/book.type";
+import Loader from "../shared/Loader";
 
 // const books = [
 //   {
@@ -47,7 +48,6 @@ export default function RecentBooks() {
   //     setIsModalOpen(true);
   //   };
 
-  console.log("Books Data:", booksData);
 
   const closeModal = () => {
     setSelectedBookId(null);
@@ -55,7 +55,7 @@ export default function RecentBooks() {
   };
 
   if (bookDataLoading) {
-    return <div className="text-center text-gray-500">Loading books...</div>;
+    return <Loader />;
   }
 
   if (bookDataError) {

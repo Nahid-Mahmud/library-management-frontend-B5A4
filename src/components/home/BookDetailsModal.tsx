@@ -18,7 +18,6 @@ export function BookDetailsModal({ bookId, isOpen, onClose }: BookDetailsModalPr
     // refetchOnMountOrArgChange: true,
   });
 
-  console.log(bookId);
   // const book = {
   //   _id: "1",
   //   title: "The Great Gatsby",

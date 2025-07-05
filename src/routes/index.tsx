@@ -27,6 +27,9 @@ const router = createBrowserRouter([
         path: "/add-book",
         element: <AddBooks />, // Assuming this is the same component as EditBooks for adding
       },
+      {
+        path: "borrow-books-summary",
+      },
     ],
   },
   {
