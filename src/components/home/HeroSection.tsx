@@ -22,7 +22,10 @@ export default function HeroSection() {
 
       <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
         <Link to="/all-books">
-          <Button size="lg" className="px-8 py-3">
+          <Button
+            size="lg"
+            className="px-8 py-3 cursor-pointer bg-green-800 text-white hover:bg-green-700 transition-colors duration-200"
+          >
             <BookOpen className="h-5 w-5 mr-2" />
             Browse Books
           </Button>
