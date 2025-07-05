@@ -1,13 +1,12 @@
-import { BookOpen } from "lucide-react";
+import { useGetAllBooksQuery } from "@/redux/features/book/bookApi";
+import type { IBook } from "@/types/book.type";
+import { useState } from "react";
 import { Link } from "react-router";
+import Loader from "../shared/Loader";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { BookDetailsModal } from "./BookDetailsModal";
-import { useState } from "react";
-import { useGetAllBooksQuery } from "@/redux/features/book/bookApi";
-import type { IBook } from "@/types/book.type";
-import Loader from "../shared/Loader";
 
 // const books = [
 //   {
@@ -48,7 +47,6 @@ export default function RecentBooks() {
   //     setIsModalOpen(true);
   //   };
 
-
   const closeModal = () => {
     setSelectedBookId(null);
     setIsModalOpen(false);
@@ -71,7 +69,7 @@ export default function RecentBooks() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {booksData?.data?.map((book: IBook) => (
-          <Card key={book._id} className="hover:shadow-md transition-shadow duration-200">
+          <Card key={book._id} className="hover:shadow-md  duration-200 hover:scale-105 transition-all ">
             <CardHeader>
               <div className="flex justify-between items-start">
                 <div className="space-y-1">
@@ -92,26 +90,23 @@ export default function RecentBooks() {
                   <span className="font-medium">Copies:</span> {book.copies}
                 </p>
               </div>
-              {book.description && <p className="text-sm text-gray-700 line-clamp-2">{book.description}</p>}
-              <div className="grid grid-cols-2 gap-2">
+              {book.description && (
+                <p className="text-sm text-gray-700 line-clamp-2">
+                  {book.description?.length > 60 ? book.description.slice(0, 60) + "..." : book.description}
+                </p>
+              )}
+              <div className="flex w-fit mx-auto">
                 <Button
                   onClick={() => {
                     setSelectedBookId(book._id);
                     setIsModalOpen(true);
                   }}
-                  variant="outline"
+                  // variant="outline"
                   size="sm"
-                  className="w-full bg-transparent"
+                  className="w-full bg-green-300 text-black hover:bg-green-600 transition-colors duration-200"
                 >
                   View Details
                 </Button>
-
-                <Link to={`/borrow/${book._id}`}>
-                  <Button size="sm" className="">
-                    <BookOpen className="h-4 w-4 mr-1" />
-                    Borrow
-                  </Button>
-                </Link>
               </div>
             </CardContent>
           </Card>
