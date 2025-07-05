@@ -5,6 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { useGetBookByIdQuery } from "@/redux/features/book/bookApi";
 import { BookOpen, BookType, Calendar, Edit, Hash, User } from "lucide-react";
 import { Link } from "react-router";
+import Loader from "../shared/Loader";
 
 interface BookDetailsModalProps {
   bookId: string | null;
@@ -13,7 +14,7 @@ interface BookDetailsModalProps {
 }
 
 export function BookDetailsModal({ bookId, isOpen, onClose }: BookDetailsModalProps) {
-  const { data: bookData } = useGetBookByIdQuery(bookId, {
+  const { data: bookData, isLoading } = useGetBookByIdQuery(bookId, {
     skip: !bookId,
     // refetchOnMountOrArgChange: true,
   });
@@ -38,6 +39,9 @@ export function BookDetailsModal({ bookId, isOpen, onClose }: BookDetailsModalPr
     return null;
   }
 
+  if (isLoading) {
+    return <Loader />;
+  }
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -60,14 +64,6 @@ export function BookDetailsModal({ bookId, isOpen, onClose }: BookDetailsModalPr
                   Edit Book
                 </Button>
               </Link>
-              {book.available && (
-                <Link to={`/borrow/${book._id}`}>
-                  <Button size="sm" onClick={onClose}>
-                    <BookOpen className="h-4 w-4 mr-2" />
-                    Borrow Book
-                  </Button>
-                </Link>
-              )}
             </div>
           </div>
 
