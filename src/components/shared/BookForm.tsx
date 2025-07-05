@@ -11,7 +11,7 @@ import {
   useGetGenreQuery,
   useUpdateBookMutation,
 } from "@/redux/features/book/bookApi";
-import type { IBook } from "@/types/book.type";
+import type { BookFormData, IBook } from "@/types/book.type";
 import { ArrowLeft, Loader2, Save } from "lucide-react";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -23,16 +23,6 @@ import { toast } from "react-toastify";
 interface UpdateBookFormProps {
   method?: "update" | "add";
 }
-
-type BookFormData = {
-  title: string;
-  author: string;
-  genre: string;
-  isbn: string;
-  description: string;
-  copies: number;
-  available: boolean;
-};
 
 export function BookForm({ method }: UpdateBookFormProps) {
   const { data: genreData } = useGetGenreQuery(undefined);
